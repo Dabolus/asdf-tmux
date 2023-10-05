@@ -72,7 +72,7 @@ install_version() {
 
 	(
 		mkdir -p "$install_path"
-		cp -r "$install_path"/* "$install_path"
+		cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
 
 		# Install libevent
 		install_libevent "$install_path"
