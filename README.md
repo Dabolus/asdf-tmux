@@ -15,10 +15,7 @@
 
 # Dependencies
 
-**TODO: adapt this section**
-
-- `bash`, `curl`, `tar`: generic POSIX utilities.
-- `SOME_ENV_VAR`: set this environment variable in your shell config to load the correct version of tool x.
+- `bash`, `curl`, `tar`, `find`: generic POSIX utilities.
 
 # Install
 
@@ -43,7 +40,7 @@ asdf install tmux latest
 asdf global tmux latest
 
 # Now tmux commands are available
-tmux --help
+tmux -V
 ```
 
 Check [asdf](https://github.com/asdf-vm/asdf) readme for more instructions on how to
