@@ -29,7 +29,7 @@ install_libevent() {
 	rm libevent-${libevent_version}-stable.tar.gz
 	cd libevent-${libevent_version}-stable
 	./configure --prefix="$install_path"
-	if make -j "$ASDF_CONCURRENCY"; then
+	if make -j "${ASDF_CONCURRENCY:-2}"; then
 		make install
 	else
 		exit 2
