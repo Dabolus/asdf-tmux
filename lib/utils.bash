@@ -18,18 +18,22 @@ if [ -n "${GITHUB_API_TOKEN:-}" ]; then
 	curl_opts=("${curl_opts[@]}" -H "Authorization: token $GITHUB_API_TOKEN")
 fi
 
+download_libevent() {
+	local tmp_download_dir libevent_version libevent_download_dir libevent_filename libevent_url
+	libevent_version="$1"
+	libevent_filename="$2"
+
+	libevent_url="https://github.com/libevent/libevent/releases/download/release-${libevent_version}-stable/libevent-${libevent_version}-stable.tar.gz"
+
+	curl "${curl_opts[@]}" -o "$libevent_filename" -C - "$libevent_url" || fail "Could not download $libevent_url"
+}
+
 install_libevent() {
-	local install_path tmp_download_dir
-	install_path=$1
+	local install_path
+	install_path="$1"
 
-	tmp_download_dir="${TMPDIR:-$(mktemp -d -t tmux_build_XXXXXX)}"
-	cd "$tmp_download_dir"
-
-	libevent_version="2.1.12"
-
-	curl -LO "https://github.com/libevent/libevent/releases/download/release-${libevent_version}-stable/libevent-${libevent_version}-stable.tar.gz"
-	tar -zxf "libevent-${libevent_version}-stable.tar.gz"
-	cd "libevent-${libevent_version}-stable"
+	# Build libevent
+	cd "$ASDF_DOWNLOAD_PATH/libevent"
 	./configure --prefix="$install_path"
 	make -j "${ASDF_CONCURRENCY:-2}"
 	if make -j "${ASDF_CONCURRENCY:-2}"; then
@@ -84,7 +88,7 @@ install_version() {
 		TMUX_EXTRA_CONFIGURE_OPTIONS=${TMUX_EXTRA_CONFIGURE_OPTIONS:-"--disable-utf8proc"}
 
 		# Build tmux
-		cd "$ASDF_DOWNLOAD_PATH"
+		cd "$ASDF_DOWNLOAD_PATH/$TOOL_NAME"
 		./configure "$TMUX_EXTRA_CONFIGURE_OPTIONS" --prefix="$install_root" CFLAGS="-I${install_root}/include" LDFLAGS="-L${install_root}/lib -Wl,-rpath,${install_root}/lib"
 		if ! make -j "${ASDF_CONCURRENCY:-2}"; then
 			exit 2
