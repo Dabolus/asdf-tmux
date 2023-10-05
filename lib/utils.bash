@@ -19,16 +19,19 @@ if [ -n "${GITHUB_API_TOKEN:-}" ]; then
 fi
 
 install_libevent() {
-	local install_path libevent_version
+	local install_path tmp_download_dir
 	install_path=$1
+
+	tmp_download_dir="${TMPDIR:-$(mktemp -d -t tmux_build_XXXXXX)}"
+	cd "$tmp_download_dir"
 
 	libevent_version="2.1.12"
 
-	curl -LO https://github.com/libevent/libevent/releases/download/release-${libevent_version}-stable/libevent-${libevent_version}-stable.tar.gz
-	tar -zxf libevent-${libevent_version}-stable.tar.gz
-	rm libevent-${libevent_version}-stable.tar.gz
-	cd libevent-${libevent_version}-stable
+	curl -LO "https://github.com/libevent/libevent/releases/download/release-${libevent_version}-stable/libevent-${libevent_version}-stable.tar.gz"
+	tar -zxf "libevent-${libevent_version}-stable.tar.gz"
+	cd "libevent-${libevent_version}-stable"
 	./configure --prefix="$install_path"
+	make -j "${ASDF_CONCURRENCY:-2}"
 	if make -j "${ASDF_CONCURRENCY:-2}"; then
 		make install
 	else
@@ -72,7 +75,7 @@ install_version() {
 
 	(
 		mkdir -p "$install_path"
-		cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
+		# cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
 
 		# Install libevent
 		install_libevent "$install_path"
@@ -81,9 +84,12 @@ install_version() {
 		TMUX_EXTRA_CONFIGURE_OPTIONS=${TMUX_EXTRA_CONFIGURE_OPTIONS:-"--disable-utf8proc"}
 
 		# Build tmux
-		cd "$install_path"
+		cd "$ASDF_DOWNLOAD_PATH"
 		./configure "$TMUX_EXTRA_CONFIGURE_OPTIONS" --prefix="$install_path" CFLAGS="-I${install_path}/include" LDFLAGS="-L${install_path}/lib -Wl,-rpath,${install_path}/lib"
-		make -j "${ASDF_CONCURRENCY:-2}"
+		if ! make -j "${ASDF_CONCURRENCY:-2}"; then
+			exit 2
+		fi
+		make install
 
 		local tool_cmd
 		tool_cmd="$(echo "$TOOL_TEST" | cut -d' ' -f1)"
