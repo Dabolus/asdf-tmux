@@ -20,14 +20,3 @@ tar -xzf "$release_file" -C "$ASDF_DOWNLOAD_PATH" --strip-components=1 || fail "
 
 # Remove the tar.gz file since we don't need to keep it
 rm "$release_file"
-
-# Install libevent
-install_libevent "$ASDF_DOWNLOAD_PATH"
-
-# Default configure options to --disable-utf8proc
-TMUX_EXTRA_CONFIGURE_OPTIONS=${TMUX_EXTRA_CONFIGURE_OPTIONS:-"--disable-utf8proc"}
-
-# Build tmux
-cd "$ASDF_DOWNLOAD_PATH"
-./configure "$TMUX_EXTRA_CONFIGURE_OPTIONS" --prefix="$ASDF_DOWNLOAD_PATH" CFLAGS="-I${ASDF_DOWNLOAD_PATH}/include" LDFLAGS="-L${ASDF_DOWNLOAD_PATH}/lib -Wl,-rpath,${ASDF_DOWNLOAD_PATH}/lib"
-make -j "${ASDF_CONCURRENCY:-2}"

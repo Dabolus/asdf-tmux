@@ -72,7 +72,18 @@ install_version() {
 
 	(
 		mkdir -p "$install_path"
-		cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
+		cp -r "$install_path"/* "$install_path"
+
+		# Install libevent
+		install_libevent "$install_path"
+
+		# Default configure options to --disable-utf8proc
+		TMUX_EXTRA_CONFIGURE_OPTIONS=${TMUX_EXTRA_CONFIGURE_OPTIONS:-"--disable-utf8proc"}
+
+		# Build tmux
+		cd "$install_path"
+		./configure "$TMUX_EXTRA_CONFIGURE_OPTIONS" --prefix="$install_path" CFLAGS="-I${install_path}/include" LDFLAGS="-L${install_path}/lib -Wl,-rpath,${install_path}/lib"
+		make -j "${ASDF_CONCURRENCY:-2}"
 
 		local tool_cmd
 		tool_cmd="$(echo "$TOOL_TEST" | cut -d' ' -f1)"
