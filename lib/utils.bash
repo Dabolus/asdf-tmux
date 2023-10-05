@@ -67,24 +67,25 @@ download_release() {
 install_version() {
 	local install_type="$1"
 	local version="$2"
-	local install_path="${3%/bin}"
+	local install_root="${3%/bin}"
+	local install_path="${install_root}/bin"
 
 	if [ "$install_type" != "version" ]; then
 		fail "asdf-$TOOL_NAME supports release installs only"
 	fi
 
 	(
-		mkdir -p "$install_path"
+		mkdir -p "$install_root"
 
 		# Install libevent
-		install_libevent "$install_path"
+		install_libevent "$install_root"
 
 		# Default configure options to --disable-utf8proc
 		TMUX_EXTRA_CONFIGURE_OPTIONS=${TMUX_EXTRA_CONFIGURE_OPTIONS:-"--disable-utf8proc"}
 
 		# Build tmux
 		cd "$ASDF_DOWNLOAD_PATH"
-		./configure "$TMUX_EXTRA_CONFIGURE_OPTIONS" --prefix="$install_path" CFLAGS="-I${install_path}/include" LDFLAGS="-L${install_path}/lib -Wl,-rpath,${install_path}/lib"
+		./configure "$TMUX_EXTRA_CONFIGURE_OPTIONS" --prefix="$install_root" CFLAGS="-I${install_root}/include" LDFLAGS="-L${install_root}/lib -Wl,-rpath,${install_root}/lib"
 		if ! make -j "${ASDF_CONCURRENCY:-2}"; then
 			exit 2
 		fi
@@ -96,7 +97,7 @@ install_version() {
 
 		echo "$TOOL_NAME $version installation was successful!"
 	) || (
-		rm -rf "$install_path"
+		rm -rf "$install_root"
 		fail "An error occurred while installing $TOOL_NAME $version."
 	)
 }
