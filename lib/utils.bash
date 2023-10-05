@@ -19,20 +19,14 @@ if [ -n "${GITHUB_API_TOKEN:-}" ]; then
 fi
 
 install_libevent() {
-	local install_path tmp_download_dir libevent_version
+	local install_path libevent_version
 	install_path=$1
-
-	if [ "$TMPDIR" = "" ]; then
-		tmp_download_dir=$(mktemp -d -t tmux_build_XXXXXX)
-	else
-		tmp_download_dir=$TMPDIR
-	fi
-	cd "$tmp_download_dir"
 
 	libevent_version="2.1.12"
 
 	curl -LO https://github.com/libevent/libevent/releases/download/release-${libevent_version}-stable/libevent-${libevent_version}-stable.tar.gz
 	tar -zxf libevent-${libevent_version}-stable.tar.gz
+	rm libevent-${libevent_version}-stable.tar.gz
 	cd libevent-${libevent_version}-stable
 	./configure --prefix="$install_path"
 	if make -j "$ASDF_CONCURRENCY"; then
