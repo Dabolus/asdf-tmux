@@ -32,9 +32,12 @@ install_libevent() {
 	local install_path
 	install_path="$1"
 
+	# Default configure options to --disable-openssl
+	LIBEVENT_EXTRA_CONFIGURE_OPTIONS=${LIBEVENT_EXTRA_CONFIGURE_OPTIONS:-"--disable-openssl"}
+
 	# Build libevent
 	cd "$ASDF_DOWNLOAD_PATH/libevent"
-	./configure --prefix="$install_path"
+	./configure "$LIBEVENT_EXTRA_CONFIGURE_OPTIONS" --prefix="$install_path"
 	make -j "${ASDF_CONCURRENCY:-2}"
 	if make -j "${ASDF_CONCURRENCY:-2}"; then
 		make install
