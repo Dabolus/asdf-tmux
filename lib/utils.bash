@@ -19,7 +19,7 @@ if [ -n "${GITHUB_API_TOKEN:-}" ]; then
 fi
 
 download_libevent() {
-	local tmp_download_dir libevent_version libevent_download_dir libevent_filename libevent_url
+	local libevent_version libevent_filename libevent_url
 	libevent_version="$1"
 	libevent_filename="$2"
 
