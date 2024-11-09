@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/Dabolus/asdf-tmux/compare/v1.0.0...v1.0.1) (2024-11-09)
+
+
+### Bug Fixes
+
+* build libevent w/o openssl support by default ([8128da8](https://github.com/Dabolus/asdf-tmux/commit/8128da84b994ff09f2b2a75d3301644e27384cee))
+
 ## 1.0.0 (2023-10-05)
 
 
