@@ -16,6 +16,7 @@
 # Dependencies
 
 - `bash`, `curl`, `tar`, `find`: generic POSIX utilities.
+- `ncurses`: `apt-get install ncurses-dev` (not needed on Mac, as `ncurses` is preinstalled)
 
 # Install
 
